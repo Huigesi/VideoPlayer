@@ -2,11 +2,13 @@ package com.example.administrator.videoplayer;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
+import com.example.administrator.videoplayer.Bean.MainUrlBean;
 import com.example.administrator.videoplayer.Bean.TodayContentBean;
 
 import java.util.ArrayList;
@@ -20,11 +22,9 @@ public class ItemVideoAdapter extends RecyclerView.Adapter<ItemVideoAdapter.View
     private List<String> videoList = new ArrayList<>();
 
     private Context context;
-    private LayoutInflater layoutInflater;
 
     public ItemVideoAdapter(Context context) {
         this.context = context;
-        this.layoutInflater = LayoutInflater.from(context);
     }
     public void setData(List<TodayContentBean> objects,List<String> videoList) {
         this.objects = objects;
@@ -48,8 +48,6 @@ public class ItemVideoAdapter extends RecyclerView.Adapter<ItemVideoAdapter.View
         Glide.with(context)
                 .load(bean.getLarge_image_list().get(0).getUrl())
                 .into( holder.videoPlayer.thumbImageView);
-
-
     }
 
     @Override

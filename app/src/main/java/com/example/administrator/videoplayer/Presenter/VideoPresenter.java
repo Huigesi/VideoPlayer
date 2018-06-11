@@ -7,11 +7,11 @@ import android.util.Log;
 import com.example.administrator.videoplayer.Bean.MainUrlBean;
 import com.example.administrator.videoplayer.Bean.TodayContentBean;
 import com.example.administrator.videoplayer.Bean.VideoBean;
-import com.example.administrator.videoplayer.JsonUtil;
 import com.example.administrator.videoplayer.Model.IOnLoadListener;
 import com.example.administrator.videoplayer.Model.IVideoModel;
 import com.example.administrator.videoplayer.Model.VideoModel;
 import com.example.administrator.videoplayer.View.IVideoView;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,13 +34,15 @@ public class VideoPresenter implements IVideoPresenter, IOnLoadListener {
         this.iVideoModel = new VideoModel();
     }
 
-
+    /*
+    * 法一：
+    * */
     @Override
     public void contentSuccess(VideoBean videoBean) {
         List<String> apiList = new ArrayList<>();
         for(int i=0;i<videoBean.getData().size();i++) {
            String content= videoBean.getData().get(i).getContent();
-            TodayContentBean contentBean = JsonUtil.getTodayContentBean(content);
+            TodayContentBean contentBean = getTodayContentBean(content);
             String api = getVideoContentApi(contentBean.getVideo_id());
             todayContentBeans.add(contentBean);
             apiList.add(api);
@@ -62,6 +64,25 @@ public class VideoPresenter implements IVideoPresenter, IOnLoadListener {
         iVideoView.showVideo(todayContentBeans,videoList);
     }
 
+    /****************************************************************************/
+
+    /*
+    * 法二：
+    * */
+
+    @Override
+    public void success(List<MainUrlBean> mainUrlBeans, List<TodayContentBean> contentBeans) {
+        List<String> videoList = new ArrayList<>();
+        iVideoView.hideDialog();
+        for (int i=0;i<mainUrlBeans.size();i++) {
+            Log.i(TAG, "mainUrlSuccess: "+mainUrlBeans.get(i).getData().getVideo_list().getVideo_1().getMain_url());
+            String mainUrl =mainUrlBeans.get(i).getData().getVideo_list().getVideo_1().getMain_url();
+            final String url1 = (new String(Base64.decode(mainUrl.getBytes(), Base64.DEFAULT)));
+            videoList.add(url1);
+        }
+        iVideoView.showVideo(contentBeans,videoList);
+    }
+/****************************************************************************/
     @Override
     public void fail(String throwable) {
         iVideoView.hideDialog();
@@ -75,7 +96,7 @@ public class VideoPresenter implements IVideoPresenter, IOnLoadListener {
         iVideoModel.loadVideo("video", this);
     }
 
-    private static String getVideoContentApi(String videoid) {
+    public static String getVideoContentApi(String videoid) {
         String VIDEO_HOST = "http://ib.365yg.com";
         String VIDEO_URL = "/video/urls/v/1/toutiao/mp4/%s?r=%s";
         String r = getRandom();
@@ -94,5 +115,10 @@ public class VideoPresenter implements IVideoPresenter, IOnLoadListener {
             result.append(random.nextInt(10));
         }
         return result.toString();
+    }
+    public static TodayContentBean getTodayContentBean(String content){
+        Gson gson=new Gson();
+        TodayContentBean bean = gson.fromJson(content, TodayContentBean.class);
+        return bean;
     }
 }

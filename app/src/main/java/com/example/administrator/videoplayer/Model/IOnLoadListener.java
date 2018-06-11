@@ -1,6 +1,7 @@
 package com.example.administrator.videoplayer.Model;
 
 import com.example.administrator.videoplayer.Bean.MainUrlBean;
+import com.example.administrator.videoplayer.Bean.TodayContentBean;
 import com.example.administrator.videoplayer.Bean.VideoBean;
 
 import java.util.List;
@@ -12,5 +13,6 @@ import java.util.List;
 public interface IOnLoadListener {
     void contentSuccess(VideoBean videoBean);
     void mainUrlSuccess(List<MainUrlBean> mainUrlBeans);
+    void success(List<MainUrlBean> mainUrlBeans,List<TodayContentBean> contentBeans);
     void fail(String throwable);
 }
